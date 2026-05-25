@@ -1,17 +1,25 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { RouterProvider } from "@tanstack/react-router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { getRouter } from "./router";
-import { startInstance } from "./start";
+import "./styles.css";
 
-const router = getRouter();
+// Create a new TanStack Query instance
+const queryClient = new QueryClient();
 
-startInstance.render(
-  <router.RootRoute>
-    <Router router={router} />
-  </router.RootRoute>,
-  document.getElementById("root")!
-);
+// Create router
+const router = getRouter(queryClient);
 
-function Router({ router }: { router: ReturnType<typeof getRouter> }) {
-  return <router.RouterProvider />;
+// Render the app
+const rootElement = document.getElementById("root");
+if (rootElement && !rootElement.innerHTML) {
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </React.StrictMode>
+  );
 }
